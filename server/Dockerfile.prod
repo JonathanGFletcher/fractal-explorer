@@ -1,0 +1,12 @@
+FROM golang:1.19
+
+WORKDIR /app
+COPY . server
+
+WORKDIR /app/server
+RUN go mod download
+
+RUN go build -o /server
+CMD ["/server"]
+
+EXPOSE 80

@@ -8,6 +8,7 @@ services:
       - cluster
     volumes:
       - ./server:/app/server
+      - media:/media
 
   frontend:
     build: ./frontend
@@ -30,3 +31,6 @@ services:
 
 networks:
   cluster:
+
+volumes:
+  media:

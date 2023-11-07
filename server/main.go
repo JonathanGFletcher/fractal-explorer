@@ -9,9 +9,10 @@ func main() {
 
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"127.0.0.1"})
+	router.Static("/static", "/media")
 
-	router.GET("/julia", func(ctx *gin.Context) { routes.Julia(ctx) })
-	router.GET("/mandelbrot", func(ctx *gin.Context) { routes.Mandelbrot(ctx) })
+	router.POST("/julia", func(ctx *gin.Context) { routes.Julia(ctx) })
+	router.POST("/mandelbrot", func(ctx *gin.Context) { routes.Mandelbrot(ctx) })
 
 	router.Run(":80")
 

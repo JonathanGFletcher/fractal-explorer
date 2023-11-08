@@ -1,29 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { BrowserRouter as Router, useLocation } from "react-router-dom"
 import styled from "styled-components";
+import { FractalProvider } from "./contexts/FractalContext";
+import FullViewFractal from "./components/FullViewFractal";
 
 const App = () => {
-	// Data
-	// const [user, setUser] = useState(null);
-
-	// Site
-	// const [selectedPage, setSelectedPage] = useState("Home");
-
-	// Get user data from server
-	// useEffect(() => {
-	// 	fetch("/api")
-	// 		.then((res) => (res.status === 200 ? res.json() : { user: false }))
-	// 		.then((json) => {
-	// 			setUser(json?.user ?? null);
-	// 		})
-	// 		.catch((e) => alert(e));
-	// }, []);
 
 	return (
-		<>
-			<Background>
-				
-			</Background>
-		</>
+		<Router>
+			<FractalProvider>
+				<Background>
+					<FullViewFractal />
+				</Background>
+			</FractalProvider>
+		</Router>
 	);
 };
 

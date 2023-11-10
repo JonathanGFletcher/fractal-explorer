@@ -29,17 +29,17 @@ func (a *Vector3F) Add(b Vector3F) Vector3F {
 }
 
 type ColorStep struct {
-	Value float64  `json:"value" binding:"required"`
-	Color Vector3F `json:"color" binding:"required"`
+	Value float64  `json:"value"`
+	Color Vector3F `json:"color"`
 }
 
 type FractalDimensions struct {
-	Width  int `json:"width" binding:"required"`
-	Height int `json:"height" binding:"required"`
-	MinX   int `json:"min_x"`
-	MinY   int `json:"min_y"`
-	MaxX   int `json:"max_x" binding:"required"`
-	MaxY   int `json:"max_y" binding:"required"`
+	Width  int `json:"width"`
+	Height int `json:"height"`
+	MinX   int `json:"view_min_x"`
+	MinY   int `json:"view_min_y"`
+	MaxX   int `json:"view_max_x"`
+	MaxY   int `json:"view_max_y"`
 }
 
 type RequestFractalJulia struct {
@@ -67,5 +67,5 @@ type ResponseFractal struct {
 }
 
 func NewFractalJuliaFilename(r RequestFractalJulia) string {
-	return fmt.Sprintf("%f_%f_%f_%f_%f_%d_%d_%d_%d_%d_%d_%d_%d.png", r.Constant.X, r.Constant.Y, r.Center.X, r.Center.Y, r.Scale, r.Iterations, r.Samples, r.Dimensions.Width, r.Dimensions.Height, r.Dimensions.MinX, r.Dimensions.MinY, r.Dimensions.MaxX, r.Dimensions.MaxY)
+	return fmt.Sprintf("kx%f_ky%f_cx%f_cy%f_sc%f_it%d_sa%d_dw%d_dh%d_dmix%d_dmiy%d_dmax%d_dmay%d.png", r.Constant.X, r.Constant.Y, r.Center.X, r.Center.Y, r.Scale, r.Iterations, r.Samples, r.Dimensions.Width, r.Dimensions.Height, r.Dimensions.MinX, r.Dimensions.MinY, r.Dimensions.MaxX, r.Dimensions.MaxY)
 }

@@ -17,49 +17,63 @@ export const FractalProvider = ({ children }) => {
 
     // ?type=julia&constant_x=-0.8&constant_y=0.156&center_x=0.0&center_y=0.0&scale=1.0&iterations=500&samples=1&width=3000&height=2000
     let query = useQuery();
-    const fractalType = query.get("type") || Constants.DEFAULT_FULL_VIEW_PARAMS.type;
-    const fractalConstantX = query.get("constant_x") || Constants.DEFAULT_FULL_VIEW_PARAMS.constant_x;
-    const fractalConstantY = query.get("constant_y") || Constants.DEFAULT_FULL_VIEW_PARAMS.constant_y;
-    const fractalCenterX = query.get("center_x") || Constants.DEFAULT_FULL_VIEW_PARAMS.center_x;
-    const fractalCenterY = query.get("center_y") || Constants.DEFAULT_FULL_VIEW_PARAMS.center_y;
-    const fractalScale = query.get("scale") || Constants.DEFAULT_FULL_VIEW_PARAMS.scale;
-    const fractalIterations = query.get("iterations") || Constants.DEFAULT_FULL_VIEW_PARAMS.iterations;
-    const fractalSamples = query.get("samples") || Constants.DEFAULT_FULL_VIEW_PARAMS.samples;
-    const fractalWidth = query.get("render_width") || Constants.DEFAULT_FULL_VIEW_PARAMS.dimensions.width;
-    const fractalHeight = query.get("render_height") || Constants.DEFAULT_FULL_VIEW_PARAMS.dimensions.height;
+    const fractalParams = {
+        type: query.get("type") || Constants.DEFAULT_FULL_VIEW_PARAMS.type,
+        constant: {
+            x: query.get("constant_x") || Constants.DEFAULT_FULL_VIEW_PARAMS.constant_x,
+            y: query.get("constant_y") || Constants.DEFAULT_FULL_VIEW_PARAMS.constant_y,
+        },
+        center: {
+             x: query.get("center_x") || Constants.DEFAULT_FULL_VIEW_PARAMS.center_x,
+             y: query.get("center_y") || Constants.DEFAULT_FULL_VIEW_PARAMS.center_y,
+        },
+        scale: query.get("scale") || Constants.DEFAULT_FULL_VIEW_PARAMS.scale,
+        iterations: query.get("iterations") || Constants.DEFAULT_FULL_VIEW_PARAMS.iterations,
+        samples: query.get("samples") || Constants.DEFAULT_FULL_VIEW_PARAMS.samples,
+        dimensions: {
+            width: query.get("render_width") || Constants.DEFAULT_FULL_VIEW_PARAMS.dimensions.width,
+            height: query.get("render_height") || Constants.DEFAULT_FULL_VIEW_PARAMS.dimensions.height,
+        },
+        colors: [],
+    };
 
     const [fullViewParams, setFullViewParams] = useState({
-        type: fractalType,
-        constant: { x: Number(fractalConstantX), y: Number(fractalConstantY) },
-        center: { x: Number(fractalCenterX), y: Number(fractalCenterY) },
-        scale: Number(fractalScale),
-        iterations: Number(fractalIterations),
-        samples: Number(fractalSamples),
+        type: fractalParams.type,
+        constant: { x: Number(fractalParams.constant.x), y: Number(fractalParams.constant.y) },
+        center: { x: Number(fractalParams.center.x), y: Number(fractalParams.center.y) },
+        scale: Number(fractalParams.scale),
+        iterations: Number(fractalParams.iterations),
+        samples: Number(fractalParams.samples),
         dimensions: {
-            width: Number(fractalWidth),
-            height: Number(fractalHeight),
+            width: Number(fractalParams.dimensions.width),
+            height: Number(fractalParams.dimensions.height),
         },
         colors: [],
     });
 
+    const updateWindowParams = (params) => {
+        const updatedSearchParams = new URLSearchParams();
+        updatedSearchParams.set("type", params?.type);
+        updatedSearchParams.set("constant_x", params?.constant?.x);
+        updatedSearchParams.set("constant_y", params?.constant?.y);
+        updatedSearchParams.set("center_x", params?.center?.x);
+        updatedSearchParams.set("center_y", params?.center?.y);
+        updatedSearchParams.set("scale", params?.scale);
+        updatedSearchParams.set("iterations", params?.iterations);
+        updatedSearchParams.set("samples", params?.samples);
+        updatedSearchParams.set("render_width", params?.dimensions?.width);
+        updatedSearchParams.set("render_height", params?.dimensions?.height);
+
+        window.history.pushState({}, '', `?${updatedSearchParams.toString()}`);
+    }
+
     const updateFullViewParams = (params) => {
         setFullViewParams(params);
+        updateWindowParams(params);
     }
 
     useEffect(() => {
-        const updatedSearchParams = new URLSearchParams();
-        updatedSearchParams.set("type", fractalType);
-        updatedSearchParams.set("constant_x", fractalConstantX);
-        updatedSearchParams.set("constant_y", fractalConstantY);
-        updatedSearchParams.set("center_x", fractalCenterX);
-        updatedSearchParams.set("center_y", fractalCenterY);
-        updatedSearchParams.set("scale", fractalScale);
-        updatedSearchParams.set("iterations", fractalIterations);
-        updatedSearchParams.set("samples", fractalSamples);
-        updatedSearchParams.set("render_width", fractalWidth);
-        updatedSearchParams.set("render_height", fractalHeight);
-
-        window.history.pushState({}, '', `?${updatedSearchParams.toString()}`);
+        updateWindowParams(fractalParams);
     }, []);
 
     return <FractalContext.Provider value={{

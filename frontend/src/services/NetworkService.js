@@ -1,11 +1,11 @@
 
 
 
-export const getFractalJulia = async (body) => {
+export const getFractal = async (params) => {
 	return new Promise((resolve, reject) => {
-		fetch("/api/julia", {
+		fetch(`/api/${params?.type ?? "julia"}`, {
 			method: "POST",
-			body: JSON.stringify(body),
+			body: JSON.stringify(params),
 			headers: {
 				"Content-Type": "application/json",
 			},

@@ -9,7 +9,7 @@ export const DEFAULT_FULL_VIEW_PARAMS = {
     iterations: 500,
     samples: 4,
     dimensions: {
-        width: 3000,
-        height: 2000,
+        width: 1920,
+        height: 1080,
     }
 }

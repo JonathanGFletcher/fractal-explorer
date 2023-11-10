@@ -5,4 +5,4 @@ run:
 
 run-prod:
 	docker compose -f docker-compose.prod.yml build
-	docker compose .env -f docker-compose.prod.yml up
+	docker compose -f docker-compose.prod.yml up

@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useFractalContext, useFractalUpdateContext } from "../contexts/FractalContext";
 import styled from "styled-components";
 import * as NetworkService from "../services/NetworkService";
+import InputField from "./bits/InputField";
+import PrimaryButton from "./bits/PrimaryButton";
+import SecondaryButton from "./bits/SecondaryButton";
+import { DEFAULT_FULL_VIEW_PARAMS } from "../Constants";
 
 const FullViewFractal = () => {
 
@@ -32,7 +36,7 @@ const FullViewFractal = () => {
             )
     );
 
-    console.log(tiles);
+    const [showParamsPanel, setShowParamsPanel] = useState(true);
 
     return <Container>
         <FractalContainer>
@@ -55,6 +59,7 @@ const FullViewFractal = () => {
             ) }
             
         </FractalContainer>
+        <ParamsPanel show={ showParamsPanel } params={ params } setParams={ updateFullViewParams } />
     </Container>
 }
 
@@ -99,9 +104,9 @@ const FractalImage = ({ x, y, tilesX, tilesY, chunkWidth, chunkHeight, params })
     const height = params?.dimensions?.height / tilesY;
 
     const minX = width * x;
-    const minY = height * y; //params?.dimensions?.height - (height * y + height);
+    const minY = height * y;
     const maxX = width * x + width - 1;
-    const maxY = height * y + height - 1; //params?.dimensions?.height - (height * y) - 1;
+    const maxY = height * y + height - 1;
 
     const reqParams = {
         ...params,
@@ -115,17 +120,19 @@ const FractalImage = ({ x, y, tilesX, tilesY, chunkWidth, chunkHeight, params })
     };
 
     const [imageUrl, setImageUrl] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         NetworkService.getFractal(reqParams)
         .then(data => setImageUrl(data?.url))
-        .catch(e => alert(e));
-    })
+        .then(() => setError(null))
+        .catch(e => setError(e));
+    });
 
     return <FractalImageContainer>
-        { imageUrl == null ?
+        { imageUrl == null || error ?
             <FractalBackground>
-                <FractalBackgroundPlaceholder />
+                <FractalBackgroundPlaceholder style={{ backgroundColor: error ? '#8c0000' : '#262626' }} />
             </FractalBackground>
             :
             <img src={ imageUrl } style={{ position: 'relative', width: chunkWidth, height: chunkHeight }} />
@@ -156,10 +163,255 @@ const FractalBackgroundPlaceholder = styled.div`
     border-radius: 5px;
 `;
 
-// width: 25vw;
-// height: 25vh;
-// object-fit: fill;
 
+
+const ParamsPanel = ({ show, params, setParams }) => {
+    if (!show) return <></>
+
+    const [currentConstantX, setCurrentConstantX] = useState(params?.constant?.x);
+    const [currentConstantY, setCurrentConstantY] = useState(params?.constant?.y);
+    const [currentIterations, setCurrentIterations] = useState(params?.iterations);
+    const [currentCenterX, setCurrentCenterX] = useState(params?.center?.x);
+    const [currentCenterY, setCurrentCenterY] = useState(params?.center?.y);
+    const [currentScale, setCurrentScale] = useState(params?.scale);
+    const [currentWidth, setCurrentWidth] = useState(params?.dimensions?.width);
+    const [currentHeight, setCurrentHeight] = useState(params?.dimensions?.height);
+    const [currentSamples, setCurrentSamples] = useState(params?.samples);
+
+    const resetToCurrentState = () => {
+        setCurrentConstantX(params?.constant?.x);
+        setCurrentConstantY(params?.constant?.y);
+        setCurrentIterations(params?.iterations);
+        setCurrentCenterX(params?.center?.x);
+        setCurrentCenterY(params?.center?.y);
+        setCurrentScale(params?.scale);
+        setCurrentWidth(params?.dimensions?.width);
+        setCurrentHeight(params?.dimensions?.height);
+        setCurrentSamples(params?.samples);
+    }
+
+    const updateFractal = () => {
+        const newParams = {
+            ...params,
+            constant: {
+                x: currentConstantX === "" ? DEFAULT_FULL_VIEW_PARAMS["constant_x"] : Number(currentConstantX),
+                y: currentConstantY === "" ? DEFAULT_FULL_VIEW_PARAMS["constant_y"] : Number(currentConstantY),
+            },
+            center: {
+                x: currentCenterX === "" ? DEFAULT_FULL_VIEW_PARAMS["center_x"] : Number(currentCenterX),
+                y: currentCenterY === "" ? DEFAULT_FULL_VIEW_PARAMS["center_y"] : Number(currentCenterY),
+            },
+            scale: currentScale === "" ? DEFAULT_FULL_VIEW_PARAMS["scale"] : Number(currentScale),
+            iterations: currentIterations === "" ? DEFAULT_FULL_VIEW_PARAMS["iterations"] : Number(currentIterations),
+            samples: currentSamples === "" ? DEFAULT_FULL_VIEW_PARAMS["samples"] : Number(currentSamples),
+            dimensions: {
+                width: currentWidth === "" ? DEFAULT_FULL_VIEW_PARAMS["dimensions"]["width"] : Number(currentWidth),
+                height: currentHeight === "" ? DEFAULT_FULL_VIEW_PARAMS["dimensions"]["height"] : Number(currentHeight),
+            },
+        };
+
+        setCurrentConstantX(newParams?.constant?.x);
+        setCurrentConstantY(newParams?.constant?.y);
+        setCurrentIterations(newParams?.iterations);
+        setCurrentCenterX(newParams?.center?.x);
+        setCurrentCenterY(newParams?.center?.y);
+        setCurrentScale(newParams?.scale);
+        setCurrentWidth(newParams?.dimensions?.width);
+        setCurrentHeight(newParams?.dimensions?.height);
+        setCurrentSamples(newParams?.samples);
+
+        setParams(newParams);
+    }
+
+    return <ParamsPanelContainer>
+        <ParamsPanelForm>
+
+            <ParamsPanelSectionLabel>Fractal</ParamsPanelSectionLabel>
+
+            <ParamsPanelLabel>Constant</ParamsPanelLabel>
+            <ParamsPanelHStack>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["constant_x"]}`} 
+                    defaultValue={currentConstantX}
+                    onChangeCallback={ e => setCurrentConstantX(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["constant_y"]}`} 
+                    defaultValue={currentConstantY}
+                    onChangeCallback={ e => setCurrentConstantY(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+            </ParamsPanelHStack>
+
+            <ParamsPanelLabel>Iterations</ParamsPanelLabel>
+            <ParamsPanelHStack>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["iterations"]}`} 
+                    defaultValue={currentIterations}
+                    onChangeCallback={ e => setCurrentIterations(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+                <ParamsPanelHStackSection />
+            </ParamsPanelHStack>
+
+            <ParamsPanelPadding />
+            <ParamsPanelSectionLabel>Scope</ParamsPanelSectionLabel>
+
+            <ParamsPanelLabel>Center</ParamsPanelLabel>
+            <ParamsPanelHStack>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["center_x"]}`} 
+                    defaultValue={currentCenterX}
+                    onChangeCallback={ e => setCurrentCenterX(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["center_y"]}`} 
+                    defaultValue={currentCenterY}
+                    onChangeCallback={ e => setCurrentCenterY(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+            </ParamsPanelHStack>
+
+            <ParamsPanelLabel>Scale</ParamsPanelLabel>
+            <ParamsPanelHStack>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["scale"]}`}
+                    defaultValue={currentScale} 
+                    onChangeCallback={ e => setCurrentScale(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+                <ParamsPanelHStackSection />
+            </ParamsPanelHStack>
+
+            <ParamsPanelPadding />
+            <ParamsPanelSectionLabel>Quality</ParamsPanelSectionLabel>
+
+            <ParamsPanelLabel>Render Size { " ( Width / Height )" }</ParamsPanelLabel>
+            <ParamsPanelHStack>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["dimensions"]["width"]}`} 
+                    defaultValue={currentWidth}
+                    onChangeCallback={ e => setCurrentWidth(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["dimensions"]["height"]}`} 
+                    defaultValue={currentHeight}
+                    onChangeCallback={ e => setCurrentHeight(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+            </ParamsPanelHStack>
+
+            <ParamsPanelLabel>Samples</ParamsPanelLabel>
+            <ParamsPanelHStack>
+                <ParamsPanelHStackSection>
+                    <InputField 
+                    inputType="number" 
+                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["samples"]}`} 
+                    defaultValue={currentSamples}
+                    onChangeCallback={ e => setCurrentSamples(e.target.value) }
+                    />
+                </ParamsPanelHStackSection>
+                <ParamsPanelHStackSection />
+            </ParamsPanelHStack>
+
+            <ParamsPanelPadding />
+
+            <ParamsPanelButtonSection>
+                <PrimaryButton title="Reset" onClickCallback={ resetToCurrentState }/>
+            </ParamsPanelButtonSection>
+
+            <ParamsPanelButtonSection>
+                <SecondaryButton title="Render" onClickCallback={ updateFractal } />
+            </ParamsPanelButtonSection>
+
+        </ParamsPanelForm>
+    </ParamsPanelContainer>
+}
+
+const ParamsPanelContainer = styled.div`
+    position: absolute;
+    z-index: 9;
+    float: right;
+    right: 20px;
+    bottom: 20px;
+    width: 300px;
+    height: auto;
+    border-radius: 5px;
+    background-color: #212121;
+    box-shadow: 0px 0px 20px black;
+    padding: 10px;
+`;
+
+const ParamsPanelForm = styled.div`
+    position: relative;
+    width: 100%;
+    height: auto;
+`;
+
+const ParamsPanelSectionLabel = styled.div`
+    position: relative;
+    font-size: 15px;
+	font-family: "Roboto", sans-serif;
+    color: #EEE;
+    border-bottom: 1px solid #EEE;
+    margin-bottom: 20px;
+`;
+
+const ParamsPanelLabel = styled.div`
+    position: relative;
+    font-size: 15px;
+	font-family: "Roboto", sans-serif;
+    color: #BBB;
+`;
+
+const ParamsPanelHStack = styled.div`
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+`;
+
+const ParamsPanelHStackSection = styled.div`
+    position: relative;
+    padding: 5px;
+    width: 100%;
+    height: auto;
+`;
+
+const ParamsPanelButtonSection = styled.div`
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const ParamsPanelPadding = styled.div`
+    position: relative;
+    width: 100%;
+    height: 30px;
+`;
 
 
 export default FullViewFractal;

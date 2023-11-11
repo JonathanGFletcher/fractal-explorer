@@ -5,6 +5,8 @@ const InputField = ({
 	inputType = "text",
 	placeholder = "",
 	dark = false,
+	width = 500,
+	defaultValue,
 	onChangeCallback = () => {},
 }) => {
 	return (
@@ -16,6 +18,7 @@ const InputField = ({
 				placeholder={placeholder}
 				onChange={onChangeCallback}
 				style={{ background: dark ? "#777" : "#f2f2f2" }}
+				value={ defaultValue }
 			/>
 		</>
 	);
@@ -30,7 +33,7 @@ const Input = styled.input`
 	background: #f2f2f2;
 	padding: 12px;
 	border-radius: 3px;
-	width: 300px;
+	width: 100%;
 	outline: none;
 	font-size: 17px;
 	font-family: "Roboto", sans-serif;

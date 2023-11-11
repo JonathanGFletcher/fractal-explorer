@@ -123,6 +123,7 @@ const FractalImage = ({ x, y, tilesX, tilesY, chunkWidth, chunkHeight, params })
     const [error, setError] = useState(null);
 
     useEffect(() => {
+
         NetworkService.getFractal(reqParams)
         .then(data => setImageUrl(data?.url))
         .then(() => setError(null))
@@ -351,14 +352,15 @@ const ParamsPanelContainer = styled.div`
     position: absolute;
     z-index: 9;
     float: right;
+    top: 20px;
     right: 20px;
-    bottom: 20px;
     width: 300px;
     height: auto;
     border-radius: 5px;
     background-color: #212121;
     box-shadow: 0px 0px 20px black;
     padding: 10px;
+    opacity: 0.85;
 `;
 
 const ParamsPanelForm = styled.div`

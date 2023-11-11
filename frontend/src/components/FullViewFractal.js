@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFractalContext, useFractalUpdateContext } from "../contexts/FractalContext";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import * as NetworkService from "../services/NetworkService";
 import InputField from "./bits/InputField";
 import PrimaryButton from "./bits/PrimaryButton";
@@ -125,7 +125,7 @@ const FractalImage = ({ x, y, tilesX, tilesY, chunkWidth, chunkHeight, params })
     useEffect(() => {
         setImageUrl(null);
         setError(null);
-        
+
         NetworkService.getFractal(reqParams)
         .then(data => setImageUrl(data?.url))
         .then(() => setError(null))
@@ -135,7 +135,13 @@ const FractalImage = ({ x, y, tilesX, tilesY, chunkWidth, chunkHeight, params })
     return <FractalImageContainer>
         { imageUrl == null || error ?
             <FractalBackground>
-                <FractalBackgroundPlaceholder style={{ backgroundColor: error ? '#8c0000' : '#262626' }} />
+                <FractalBackgroundPlaceholder style={{ backgroundColor: error ? '#8c0000' : '#262626' }}>
+                    { error ?
+                        <FractalBackgroundError>!</FractalBackgroundError>
+                        :
+                        <FractalBackgroundLoader />
+                    }
+                </FractalBackgroundPlaceholder>
             </FractalBackground>
             :
             <img src={ imageUrl } style={{ position: 'relative', width: chunkWidth, height: chunkHeight }} />
@@ -164,6 +170,30 @@ const FractalBackgroundPlaceholder = styled.div`
     height: 100%;
     background-color: #262626;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const spin = keyframes`
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+`;
+
+const FractalBackgroundLoader = styled.div`
+    border: 8px solid #282828;
+    border-top: 8px solid #323232;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: ${spin} 1s linear infinite;
+`;
+
+const FractalBackgroundError = styled.div`
+    position: relative;
+    font-size: 48px;
+    font-family: "Roboto", sans-serif;
+    color: white;
 `;
 
 

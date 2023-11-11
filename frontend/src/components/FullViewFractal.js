@@ -123,12 +123,14 @@ const FractalImage = ({ x, y, tilesX, tilesY, chunkWidth, chunkHeight, params })
     const [error, setError] = useState(null);
 
     useEffect(() => {
-
+        setImageUrl(null);
+        setError(null);
+        
         NetworkService.getFractal(reqParams)
         .then(data => setImageUrl(data?.url))
         .then(() => setError(null))
         .catch(e => setError(e));
-    });
+    }, [params]);
 
     return <FractalImageContainer>
         { imageUrl == null || error ?

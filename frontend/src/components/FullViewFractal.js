@@ -6,6 +6,8 @@ import InputField from "./bits/InputField";
 import PrimaryButton from "./bits/PrimaryButton";
 import SecondaryButton from "./bits/SecondaryButton";
 import { DEFAULT_FULL_VIEW_PARAMS } from "../Constants";
+import { BiZoomIn, BiZoomOut, BiExpand } from "react-icons/bi";
+import { FaCrosshairs } from "react-icons/fa";
 
 const FullViewFractal = () => {
 
@@ -37,6 +39,36 @@ const FullViewFractal = () => {
     );
 
     const [showParamsPanel, setShowParamsPanel] = useState(true);
+    const [centerToolActive, setCenterToolActive] = useState(false);
+
+    const centerCallback = () => {
+        
+    }
+
+    const zoomInCallback = () => {
+        updateFullViewParams({
+            ...params,
+            scale: Number(params?.scale) * 2
+        });
+    }
+
+    const zoomOutCallback = () => {
+        updateFullViewParams({
+            ...params,
+            scale: Number(params?.scale) / 2
+        });
+    }
+
+    const resetZoomCallback = () => {
+        updateFullViewParams({
+            ...params,
+            scale: 1,
+            center: {
+                x: 0,
+                y: 0,
+            }
+        });
+    }
 
     return <Container>
         <FractalContainer>
@@ -59,6 +91,14 @@ const FullViewFractal = () => {
             ) }
             
         </FractalContainer>
+        
+        <ToolBar 
+        centerCallback={ centerCallback }
+        zoomInCallback={ zoomInCallback }
+        zoomOutCallback={ zoomOutCallback }
+        resetZoomCallback={ resetZoomCallback }
+        />
+
         <ParamsPanel show={ showParamsPanel } params={ params } setParams={ updateFullViewParams } />
     </Container>
 }
@@ -198,6 +238,68 @@ const FractalBackgroundError = styled.div`
 
 
 
+const ToolBar = ({ centerCallback, zoomInCallback, zoomOutCallback, resetZoomCallback }) => {
+
+    return <ToolBarContainer>
+        <ToolBarButtonContainer title="Center" className="visible" onClick={ centerCallback }>
+            <FaCrosshairs size={ 30 } color="white" />
+        </ToolBarButtonContainer>
+        <ToolBarButtonSpacing />
+        <ToolBarButtonContainer title="Zoom In" className="visible" onClick={ zoomInCallback }>
+            <BiZoomIn size={ 33 } color="white" />
+        </ToolBarButtonContainer>
+        <ToolBarButtonSpacing />
+        <ToolBarButtonContainer title="Zoom Out" className="visible" onClick={ zoomOutCallback }>
+            <BiZoomOut size={ 33 } color="white" />
+        </ToolBarButtonContainer>
+        <ToolBarButtonSpacing />
+        <ToolBarButtonContainer title="Reset Zoom" className="visible" onClick={ resetZoomCallback }>
+            <BiExpand size={ 30 } color="white" />
+        </ToolBarButtonContainer>
+    </ToolBarContainer>
+}
+
+const ToolBarContainer = styled.div`
+    position: absolute;
+    z-index: 9;
+    top: 20px;
+    left: 20px;
+    width: auto;
+    height: auto;
+    border-radius: 5px;
+    background-color: #212121;
+    box-shadow: 0px 0px 20px black;
+    padding: 10px;
+    opacity: 0.85;
+`;
+
+const ToolBarButtonContainer = styled.div`
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 55px;
+    height: 50px;
+    background-color: #313131;
+    opacity: 0.95;
+    border-radius: 5px;
+
+    transition: background-color 0.3s ease;
+
+	:hover {
+		background-color: #f37878;
+		cursor: pointer;
+	}
+`;
+
+const ToolBarButtonSpacing = styled.div`
+    position: relative;
+    width: 55px;
+    height: 5px;
+`;
+
+
+
 const ParamsPanel = ({ show, params, setParams }) => {
     if (!show) return <></>
 
@@ -255,6 +357,8 @@ const ParamsPanel = ({ show, params, setParams }) => {
 
         setParams(newParams);
     }
+
+    useEffect(() => resetToCurrentState(), [params]);
 
     return <ParamsPanelContainer>
         <ParamsPanelForm>

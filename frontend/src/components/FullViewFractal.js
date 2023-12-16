@@ -21,7 +21,7 @@ const FullViewFractal = () => {
     const tilesY = 4;
 
     const { innerWidth, innerHeight } = window;
-    const fullImageWidth = innerWidth - 20;
+    const fullImageWidth = innerWidth - 20; // Account for padding
     const fullImageHeight = innerHeight - 20;
     const chunkWidth = fullImageWidth / tilesX;
     const chunkHeight = fullImageHeight / tilesY;
@@ -42,7 +42,34 @@ const FullViewFractal = () => {
     const [centerToolActive, setCenterToolActive] = useState(false);
 
     const centerCallback = () => {
-        
+        setCenterToolActive(!centerToolActive);
+    }
+
+    const centerSelected = (e) => {
+        if (!centerToolActive) return;
+
+        const imageX = e.clientX - 10; // Account for padding
+        const imageY = e.clientY - 10;
+        const imageXRatio = imageX / fullImageWidth;
+        const imageYRatio = imageY / fullImageHeight;
+        const coordXRatio = (imageXRatio * 2 - 1);
+        const coordYRatio = (imageYRatio * 2 - 1);
+        const imageMinX = params?.center?.x - 2.5 / params?.scale;
+        const imageMinY = params?.center?.y - 2.5 / params?.scale;
+        const imageMaxX = params?.center?.x + 2.5 / params?.scale;
+        const imageMaxY = params?.center?.y + 2.5 / params?.scale;
+        const coordWidth = imageMaxX - imageMinX;
+        const coordHeight = imageMaxY - imageMinY;
+        const newCenterX = params?.center?.x + (coordWidth * coordXRatio / 2.5);
+        const newCenterY = params?.center?.y + (coordHeight * coordYRatio / 2.5);
+
+        updateFullViewParams({
+            ...params,
+            center: {
+                x: newCenterX,
+                y: newCenterY,
+            }
+        });
     }
 
     const zoomInCallback = () => {
@@ -71,7 +98,7 @@ const FullViewFractal = () => {
     }
 
     return <Container>
-        <FractalContainer>
+        <FractalContainer style={{ cursor: centerToolActive ? 'crosshair': 'default' }} onClick={ centerSelected }>
 
             { tiles.map(row => 
                 <FractalRow>
@@ -93,6 +120,7 @@ const FullViewFractal = () => {
         </FractalContainer>
         
         <ToolBar 
+        centerActive={ centerToolActive }
         centerCallback={ centerCallback }
         zoomInCallback={ zoomInCallback }
         zoomOutCallback={ zoomOutCallback }
@@ -238,10 +266,15 @@ const FractalBackgroundError = styled.div`
 
 
 
-const ToolBar = ({ centerCallback, zoomInCallback, zoomOutCallback, resetZoomCallback }) => {
+const ToolBar = ({ centerActive, centerCallback, zoomInCallback, zoomOutCallback, resetZoomCallback }) => {
 
     return <ToolBarContainer>
-        <ToolBarButtonContainer title="Center" className="visible" onClick={ centerCallback }>
+        <ToolBarButtonContainer 
+        title="Center" 
+        className="visible" 
+        onClick={ centerCallback } 
+        style={{ backgroundColor: centerActive ? '#f37878' : null }}
+        >
             <FaCrosshairs size={ 30 } color="white" />
         </ToolBarButtonContainer>
         <ToolBarButtonSpacing />

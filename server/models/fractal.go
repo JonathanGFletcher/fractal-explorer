@@ -43,6 +43,7 @@ type FractalDimensions struct {
 }
 
 type RequestFractalJulia struct {
+	Power      int               `json:"power" binding:"required"`
 	Constant   Vector2F          `json:"constant" binding:"required"`
 	Center     Vector2F          `json:"center" binding:"required"`
 	Scale      float64           `json:"scale" binding:"required"`
@@ -67,5 +68,5 @@ type ResponseFractal struct {
 }
 
 func NewFractalJuliaFilename(r RequestFractalJulia) string {
-	return fmt.Sprintf("kx%f_ky%f_cx%f_cy%f_sc%f_it%d_sa%d_dw%d_dh%d_dmix%d_dmiy%d_dmax%d_dmay%d.png", r.Constant.X, r.Constant.Y, r.Center.X, r.Center.Y, r.Scale, r.Iterations, r.Samples, r.Dimensions.Width, r.Dimensions.Height, r.Dimensions.MinX, r.Dimensions.MinY, r.Dimensions.MaxX, r.Dimensions.MaxY)
+	return fmt.Sprintf("p%d_kx%f_ky%f_cx%f_cy%f_sc%f_it%d_sa%d_dw%d_dh%d_dmix%d_dmiy%d_dmax%d_dmay%d.png", r.Power, r.Constant.X, r.Constant.Y, r.Center.X, r.Center.Y, r.Scale, r.Iterations, r.Samples, r.Dimensions.Width, r.Dimensions.Height, r.Dimensions.MinX, r.Dimensions.MinY, r.Dimensions.MaxX, r.Dimensions.MaxY)
 }

@@ -19,6 +19,7 @@ export const FractalProvider = ({ children }) => {
     let query = useQuery();
     const fractalParams = {
         type: query.get("type") || Constants.DEFAULT_FULL_VIEW_PARAMS.type,
+        power: query.get("power") || Constants.DEFAULT_FULL_VIEW_PARAMS.power,
         constant: {
             x: query.get("constant_x") || Constants.DEFAULT_FULL_VIEW_PARAMS.constant_x,
             y: query.get("constant_y") || Constants.DEFAULT_FULL_VIEW_PARAMS.constant_y,
@@ -39,6 +40,7 @@ export const FractalProvider = ({ children }) => {
 
     const [fullViewParams, setFullViewParams] = useState({
         type: fractalParams.type,
+        power: Number(fractalParams.power),
         constant: { x: Number(fractalParams.constant.x), y: Number(fractalParams.constant.y) },
         center: { x: Number(fractalParams.center.x), y: Number(fractalParams.center.y) },
         scale: Number(fractalParams.scale),
@@ -54,6 +56,7 @@ export const FractalProvider = ({ children }) => {
     const updateWindowParams = (params) => {
         const updatedSearchParams = new URLSearchParams();
         updatedSearchParams.set("type", params?.type);
+        if (params?.type === "julia") updatedSearchParams.set("power", params?.power);
         updatedSearchParams.set("constant_x", params?.constant?.x);
         updatedSearchParams.set("constant_y", params?.constant?.y);
         updatedSearchParams.set("center_x", params?.center?.x);

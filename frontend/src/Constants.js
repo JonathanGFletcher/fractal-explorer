@@ -1,6 +1,7 @@
 
 export const DEFAULT_FULL_VIEW_PARAMS = {
     type: "julia",
+    power: 2,
     constant_x: -0.8,
     constant_y: 0.156,
     center_x: 0.0,

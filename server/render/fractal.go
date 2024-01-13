@@ -44,9 +44,11 @@ func NewFractalJulia(request models.RequestFractalJulia) (*image.RGBA, error) {
 					if !((zn.X*zn.X+zn.Y*zn.Y) < 4.0 && it < float64(request.Iterations)) {
 						break
 					}
+					r := math.Sqrt(zn.X*zn.X + zn.Y*zn.Y)
+					t := math.Atan2(zn.Y, zn.X)
 					z := models.Vector2F{
-						X: zn.X*zn.X - zn.Y*zn.Y,
-						Y: 2 * zn.X * zn.Y,
+						X: math.Pow(r, float64(request.Power)) * math.Cos(float64(request.Power)*t),
+						Y: math.Pow(r, float64(request.Power)) * math.Sin(float64(request.Power)*t),
 					}
 					zn = z.Add(request.Constant)
 					it++

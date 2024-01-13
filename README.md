@@ -1,5 +1,7 @@
 # fractal-explorer
 
+![demo.png](./assets/demo.png)
+
 ## Architecture
 - Docker Compose
 - Nginx Reverse Proxy

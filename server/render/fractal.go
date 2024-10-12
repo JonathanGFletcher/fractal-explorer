@@ -2,13 +2,25 @@ package render
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"image/color"
+	"image/png"
 	"math"
 	"math/rand"
+	"os"
 
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jonathangfletcher/fractal-explorer/server/models"
+	"gocv.io/x/gocv"
+	"gorm.io/gorm"
 )
+
+func ProgressValue(start float64, end float64, ratio float64) float64 {
+	increment := (end - start) * ratio
+	return start + increment
+}
 
 func NewFractalJulia(request models.RequestFractalJulia) (*image.RGBA, error) {
 	if request.Dimensions.MaxX-request.Dimensions.MinX > request.Dimensions.Width || request.Dimensions.MaxY-request.Dimensions.MinY > request.Dimensions.Height {
@@ -70,4 +82,121 @@ func NewFractalJulia(request models.RequestFractalJulia) (*image.RGBA, error) {
 	}
 
 	return img, nil
+}
+
+func NewFractalImageJulia(request models.RequestFractalJulia) (string, error) {
+	filename := models.NewFractalJuliaFilename(request, "", "png")
+	path := "/media/" + filename
+	url := "/api/static/" + filename
+	file, err := os.Open(path)
+	if err == nil {
+		file.Close()
+		return url, nil
+	}
+
+	request.Colors = DefaultColors()
+	img, err := NewFractalJulia(request)
+	if err != nil {
+		return "", err
+	}
+	file, err = os.Create(path)
+	if err != nil {
+		return "", err
+	}
+	png.Encode(file, img)
+	file.Close()
+	return url, nil
+}
+
+func NewFractalVideoJulia(request models.RequestFractalJuliaVideo, c *gin.Context, db *gorm.DB) (string, error) {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return "", err
+	}
+	filename := id.String() + ".avi"
+	path := "/media/" + filename
+
+	var frames []models.RequestFractalJulia
+	numFrames := request.Seconds * 30
+	for i := 0; i <= int(numFrames); i++ {
+		ratio := float64(i) / float64(numFrames)
+		constant := models.Vector2F{
+			X: ProgressValue(request.Start.Constant.X, request.End.Constant.X, ratio),
+			Y: ProgressValue(request.Start.Constant.Y, request.End.Constant.Y, ratio),
+		}
+		center := models.Vector2F{
+			X: ProgressValue(request.Start.Constant.X, request.End.Constant.X, ratio),
+			Y: ProgressValue(request.Start.Constant.Y, request.End.Constant.Y, ratio),
+		}
+		scale := math.Pow(ProgressValue(math.Log2(request.Start.Scale), math.Log2(request.End.Scale), ratio), 2)
+		iterations := int(ProgressValue(float64(request.Start.Iterations), float64(request.End.Iterations), ratio))
+
+		r := models.RequestFractalJulia{
+			Power:      request.Start.Power,
+			Constant:   constant,
+			Center:     center,
+			Scale:      scale,
+			Iterations: iterations,
+			Samples:    request.Start.Samples,
+			Dimensions: request.Start.Dimensions,
+			Colors:     DefaultColors(),
+		}
+		frames = append(frames, r)
+	}
+
+	db.Create(&models.VideoTask{
+		SessionId:       id.String(),
+		Completed:       false,
+		TotalFrames:     len(frames),
+		CompletedFrames: 0,
+	})
+
+	go func() {
+		vw, err := gocv.VideoWriterFile(path, "MJPG", 30, request.Start.Dimensions.Width, request.Start.Dimensions.Height, true)
+		if err != nil {
+			fmt.Errorf("Video %s: Error: %s\n", id.String(), err.Error())
+			return
+		}
+		defer vw.Close()
+
+		for i, r := range frames {
+			frameNumber := i + 1
+			img, err := NewFractalJulia(r)
+			if err != nil {
+				fmt.Errorf("Video %s: Error: %s\n", id.String(), err.Error())
+				return
+			}
+			mat, err := gocv.ImageToMatRGBA(img)
+			if err != nil {
+				fmt.Errorf("Video %s: Error: %s\n", id.String(), err.Error())
+				return
+			}
+			defer mat.Close()
+			err = vw.Write(mat)
+			if err != nil {
+				fmt.Errorf("Video %s: Error: %s\n", id.String(), err.Error())
+				return
+			}
+			var task models.VideoTask
+			result := db.Find(&task, "session_id = ?", id.String())
+			if result.Error != nil {
+				fmt.Errorf("Video %s: Error: %s\n", id.String(), result.Error.Error())
+				return
+			}
+			task.CompletedFrames = frameNumber
+			db.Save(&task)
+			fmt.Printf("Video %s: Rendered %d/%d frames\n", id.String(), frameNumber, len(frames))
+		}
+		var task models.VideoTask
+		result := db.Find(&task, "session_id = ?", id.String())
+		if result.Error != nil {
+			fmt.Errorf("Video %s: Error: %s\n", id.String(), result.Error.Error())
+			return
+		}
+		task.Completed = true
+		db.Save(&task)
+		fmt.Printf("Video %s: Completed\n", id.String())
+	}()
+
+	return id.String(), nil
 }

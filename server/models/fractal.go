@@ -53,6 +53,12 @@ type RequestFractalJulia struct {
 	Colors     []ColorStep       `json:"colors" binding:"required"`
 }
 
+type RequestFractalJuliaVideo struct {
+	Start   RequestFractalJulia `json:"start"`
+	End     RequestFractalJulia `json:"end"`
+	Seconds int                 `json:"seconds"`
+}
+
 type RequestFractalMandelbrot struct {
 	Constant   Vector2F          `json:"constant" binding:"required"`
 	Center     Vector2F          `json:"center" binding:"required"`
@@ -67,6 +73,13 @@ type ResponseFractal struct {
 	Url string `json:"url"`
 }
 
-func NewFractalJuliaFilename(r RequestFractalJulia) string {
-	return fmt.Sprintf("p%d_kx%f_ky%f_cx%f_cy%f_sc%f_it%d_sa%d_dw%d_dh%d_dmix%d_dmiy%d_dmax%d_dmay%d.png", r.Power, r.Constant.X, r.Constant.Y, r.Center.X, r.Center.Y, r.Scale, r.Iterations, r.Samples, r.Dimensions.Width, r.Dimensions.Height, r.Dimensions.MinX, r.Dimensions.MinY, r.Dimensions.MaxX, r.Dimensions.MaxY)
+type ResponseFractalStartVideo struct {
+	Id string `json:"id"`
+}
+
+func NewFractalJuliaFilename(r RequestFractalJulia, prefix string, extension string) string {
+	if prefix != "" {
+		prefix += "_"
+	}
+	return fmt.Sprintf("%sp%d_kx%f_ky%f_cx%f_cy%f_sc%f_it%d_sa%d_dw%d_dh%d_dmix%d_dmiy%d_dmax%d_dmay%d.%s", prefix, r.Power, r.Constant.X, r.Constant.Y, r.Center.X, r.Center.Y, r.Scale, r.Iterations, r.Samples, r.Dimensions.Width, r.Dimensions.Height, r.Dimensions.MinX, r.Dimensions.MinY, r.Dimensions.MaxX, r.Dimensions.MaxY, extension)
 }

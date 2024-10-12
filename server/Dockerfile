@@ -1,8 +1,8 @@
-FROM golang:1.19
+FROM gocv/opencv
 
 WORKDIR /app
 RUN mkdir glacier
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 COPY . server
 
 WORKDIR /app/server

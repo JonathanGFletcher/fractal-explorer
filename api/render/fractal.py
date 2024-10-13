@@ -9,13 +9,22 @@ from PIL import Image
 
 
 def render_julia(config: FractalConfig) -> np.ndarray:
+    width = config.dimensions.width
+    height = config.dimensions.height
     x_min = (-1.5 + config.center.x) / config.scale
     x_max = (1.5 + config.center.x) / config.scale
     y_min = (-1.5 + config.center.y) / config.scale
     y_max = (1.5 + config.center.y) / config.scale
+    aspect_ratio = width / height
+    if aspect_ratio > 1:
+        y_range = (y_max - y_min) / aspect_ratio
+        y_min += (y_max - y_min - y_range) / 2
+        y_max = y_min + y_range
+    else:
+        x_range = (x_max - x_min) * aspect_ratio
+        x_min += (x_max - x_min - x_range) / 2
+        x_max = x_min + x_range
 
-    width = config.dimensions.width
-    height = config.dimensions.height
     x_coords = cp.linspace(x_min, x_max, width)
     y_coords = cp.linspace(y_min, y_max, height)
     real, imag = cp.meshgrid(x_coords, y_coords)

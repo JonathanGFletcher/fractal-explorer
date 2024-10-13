@@ -39,8 +39,8 @@ def render_julia(config: FractalConfig) -> np.ndarray:
     final_b_channel = cp.zeros((height, width), dtype=cp.float32)
 
     for _ in range(config.samples):
-        jitter_real = real + (cp.random.rand(height, width) - 0.5) * (x_max - x_min) / width
-        jitter_imag = imag + (cp.random.rand(height, width) - 0.5) * (y_max - y_min) / height
+        jitter_real = real + (cp.random.rand(height, width) - 0.5) / width
+        jitter_imag = imag + (cp.random.rand(height, width) - 0.5) / height
         z = jitter_real + 1j * jitter_imag
         iterations = cp.zeros(z.shape, dtype=int)
 
@@ -49,7 +49,10 @@ def render_julia(config: FractalConfig) -> np.ndarray:
             z[mask] = z[mask] ** 2 + complex(config.constant.x, config.constant.y)
             iterations[mask] = i
 
-        normalized_iterations = np.clip(cp.asnumpy(iterations / config.iterations), 0, 1)
+        mod = cp.sqrt(cp.abs(z) ** 2)
+        log_mod = cp.log2(cp.maximum(1.0, mod))
+        smooth_iterations = iterations + 1 - cp.log2(cp.maximum(1, log_mod))
+        normalized_iterations = np.clip(cp.asnumpy(smooth_iterations / config.iterations), 0, 1)
 
         final_r_channel += cp.asarray(np.interp(normalized_iterations, step_values, r_colors).astype(np.float32))
         final_g_channel += cp.asarray(np.interp(normalized_iterations, step_values, g_colors).astype(np.float32))

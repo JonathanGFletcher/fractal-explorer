@@ -1,0 +1,44 @@
+services:
+
+  server:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    networks:
+      - cluster
+    volumes:
+      - media:/media
+      - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    networks:
+      - cluster
+
+  proxy:
+    build: ./proxy
+    ports:
+      - 80:80
+    networks:
+      - cluster
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - server
+      - frontend
+
+networks:
+  cluster:
+
+volumes:
+  media:
+  data:

@@ -13,8 +13,8 @@ if __name__ == "__main__":
                 "y": 0.0,
             },
             "scale": 1,
-            "iterations": 800,
-            "samples": 4,
+            "iterations": 500,
+            "samples": 1,
             "dimensions": {
                 "width": 3000,
                 "height": 2000,

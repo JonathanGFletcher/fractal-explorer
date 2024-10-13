@@ -17,12 +17,14 @@ const FullViewFractal = () => {
     const FractalUpdateContext = useFractalUpdateContext();
     const updateFullViewParams = FractalUpdateContext?.updateFullViewParams;
 
-    const tilesX = 5;
-    const tilesY = 4;
+    // const tilesX = 5;
+    // const tilesY = 4;
+    const tilesX = 1;
+    const tilesY = 1;
 
     const { innerWidth, innerHeight } = window;
-    const fullImageWidth = innerWidth - 20; // Account for padding
-    const fullImageHeight = innerHeight - 20;
+    const fullImageWidth = innerWidth;
+    const fullImageHeight = innerHeight;
     const chunkWidth = fullImageWidth / tilesX;
     const chunkHeight = fullImageHeight / tilesY;
 
@@ -135,7 +137,6 @@ const Container = styled.div`
     position: relative;
     width: 100%;
     height: 100%;
-    padding: 10px;
 `;
 
 const FractalContainer = styled.div`

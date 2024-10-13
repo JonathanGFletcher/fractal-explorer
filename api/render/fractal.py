@@ -43,8 +43,8 @@ def render_julia(config: FractalConfig) -> np.ndarray:
     final_b_channel = cp.zeros((height, width), dtype=cp.float32)
 
     for _ in range(config.samples):
-        jitter_real = real + (cp.random.rand(height, width) - 0.5) / full_width
-        jitter_imag = imag + (cp.random.rand(height, width) - 0.5) / full_height
+        jitter_real = real + (cp.random.rand(height, width) - 0.5) * (x_max - x_min) / full_width
+        jitter_imag = imag + (cp.random.rand(height, width) - 0.5) * (y_max - y_min) / full_height
         z = jitter_real + 1j * jitter_imag
         iterations = cp.zeros(z.shape, dtype=int)
 

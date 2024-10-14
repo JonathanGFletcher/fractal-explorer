@@ -17,12 +17,14 @@ const FullViewFractal = () => {
     const FractalUpdateContext = useFractalUpdateContext();
     const updateFullViewParams = FractalUpdateContext?.updateFullViewParams;
 
-    const tilesX = 5;
-    const tilesY = 4;
+    // const tilesX = 5;
+    // const tilesY = 4;
+    const tilesX = 1;
+    const tilesY = 1;
 
     const { innerWidth, innerHeight } = window;
-    const fullImageWidth = innerWidth - 20; // Account for padding
-    const fullImageHeight = innerHeight - 20;
+    const fullImageWidth = innerWidth;
+    const fullImageHeight = innerHeight;
     const chunkWidth = fullImageWidth / tilesX;
     const chunkHeight = fullImageHeight / tilesY;
 
@@ -48,8 +50,8 @@ const FullViewFractal = () => {
     const centerSelected = (e) => {
         if (!centerToolActive) return;
 
-        const imageX = e.clientX - 10; // Account for padding
-        const imageY = e.clientY - 10;
+        const imageX = e.clientX;
+        const imageY = e.clientY;
         const imageXRatio = imageX / fullImageWidth;
         const imageYRatio = imageY / fullImageHeight;
         const coordXRatio = (imageXRatio * 2 - 1);
@@ -135,7 +137,6 @@ const Container = styled.div`
     position: relative;
     width: 100%;
     height: 100%;
-    padding: 10px;
 `;
 
 const FractalContainer = styled.div`

@@ -3,7 +3,7 @@
 
 export const getFractal = async (params) => {
 	return new Promise((resolve, reject) => {
-		fetch(`/api/${params?.type ?? "julia"}`, {
+		fetch(`/api/render/image/${params?.type ?? "julia"}`, {
 			method: "POST",
 			body: JSON.stringify(params),
 			headers: {

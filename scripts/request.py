@@ -1,7 +1,7 @@
 import requests
 
 if __name__ == "__main__":
-    res = requests.post("http://localhost/api/video/julia/start", json={
+    res = requests.post("http://localhost/api/render/video/julia", json={
         "start": {
             "power": 2,
             "constant": {
@@ -16,12 +16,12 @@ if __name__ == "__main__":
             "iterations": 500,
             "samples": 4,
             "dimensions": {
-                "width": 300,
-                "height": 200,
+                "width": 1920,
+                "height": 1080,
                 "view_min_x": 0,
                 "view_min_y": 0,
-                "view_max_x": 299,
-                "view_max_y": 199,
+                "view_max_x": 1920,
+                "view_max_y": 1080,
             },
             "colors": [],
         },
@@ -35,7 +35,7 @@ if __name__ == "__main__":
                 "x": 0.0,
                 "y": 0.0,
             },
-            "scale": 8,
+            "scale": 131072,
             "iterations": 500,
             "samples": 4,
             "dimensions": {
@@ -48,6 +48,6 @@ if __name__ == "__main__":
             },
             "colors": [],
         },
-        "seconds": 1,
+        "seconds": 60,
     })
     print(res.status_code, res.reason)

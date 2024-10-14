@@ -10,6 +10,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "opencv-python>=4.10.0.84",
     "pillow>=10.4.0",
-    "sqlmodel>=0.0.22",
+    "sqlalchemy>=2.0.35",
     "uvicorn>=0.31.1",
 ]

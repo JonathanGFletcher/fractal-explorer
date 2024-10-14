@@ -9,7 +9,7 @@ services:
     volumes:
       - media:/media
       - data:/data
-    command: uv run uvicorn --host 0.0.0.0 --port 80 app:app
+    command: uv run uvicorn --host 0.0.0.0 --port 80 --reload app:app
     develop:
       watch:
         - action: sync

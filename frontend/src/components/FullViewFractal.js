@@ -399,25 +399,29 @@ const ParamsPanel = ({ show, params, setParams }) => {
 
             <ParamsPanelSectionLabel>Fractal</ParamsPanelSectionLabel>
 
-            <ParamsPanelLabel>Constant</ParamsPanelLabel>
-            <ParamsPanelHStack>
-                <ParamsPanelHStackSection>
-                    <InputField 
-                    inputType="number" 
-                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["constant_x"]}`} 
-                    defaultValue={currentConstantX}
-                    onChangeCallback={ e => setCurrentConstantX(e.target.value) }
-                    />
-                </ParamsPanelHStackSection>
-                <ParamsPanelHStackSection>
-                    <InputField 
-                    inputType="number" 
-                    placeholder={`${DEFAULT_FULL_VIEW_PARAMS["constant_y"]}`} 
-                    defaultValue={currentConstantY}
-                    onChangeCallback={ e => setCurrentConstantY(e.target.value) }
-                    />
-                </ParamsPanelHStackSection>
-            </ParamsPanelHStack>
+            { params?.type === "julia" ? 
+            <>
+                <ParamsPanelLabel>Constant</ParamsPanelLabel>
+                <ParamsPanelHStack>
+                    <ParamsPanelHStackSection>
+                        <InputField 
+                        inputType="number" 
+                        placeholder={`${DEFAULT_FULL_VIEW_PARAMS["constant_x"]}`} 
+                        defaultValue={currentConstantX}
+                        onChangeCallback={ e => setCurrentConstantX(e.target.value) }
+                        />
+                    </ParamsPanelHStackSection>
+                    <ParamsPanelHStackSection>
+                        <InputField 
+                        inputType="number" 
+                        placeholder={`${DEFAULT_FULL_VIEW_PARAMS["constant_y"]}`} 
+                        defaultValue={currentConstantY}
+                        onChangeCallback={ e => setCurrentConstantY(e.target.value) }
+                        />
+                    </ParamsPanelHStackSection>
+                </ParamsPanelHStack>
+            </>
+            : null }
 
             <ParamsPanelLabel>Iterations</ParamsPanelLabel>
             <ParamsPanelHStack>

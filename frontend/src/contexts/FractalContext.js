@@ -14,8 +14,6 @@ const useQuery = () => {
 }
 
 export const FractalProvider = ({ children }) => {
-
-    // ?type=julia&constant_x=-0.8&constant_y=0.156&center_x=0.0&center_y=0.0&scale=1.0&iterations=500&samples=1&width=3000&height=2000
     let query = useQuery();
     const fractalParams = {
         type: query.get("type") || Constants.DEFAULT_FULL_VIEW_PARAMS.type,
@@ -56,9 +54,11 @@ export const FractalProvider = ({ children }) => {
     const updateWindowParams = (params) => {
         const updatedSearchParams = new URLSearchParams();
         updatedSearchParams.set("type", params?.type);
-        if (params?.type === "julia") updatedSearchParams.set("power", params?.power);
-        updatedSearchParams.set("constant_x", params?.constant?.x);
-        updatedSearchParams.set("constant_y", params?.constant?.y);
+        if (params?.type === "julia") {
+            updatedSearchParams.set("power", params?.power);
+            updatedSearchParams.set("constant_x", params?.constant?.x);
+            updatedSearchParams.set("constant_y", params?.constant?.y);
+        }
         updatedSearchParams.set("center_x", params?.center?.x);
         updatedSearchParams.set("center_y", params?.center?.y);
         updatedSearchParams.set("scale", params?.scale);

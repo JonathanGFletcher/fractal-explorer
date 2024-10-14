@@ -14,6 +14,12 @@
 
 ## Run the Application
 
+### Requirements
+- Nvidia CUDA GPU with Compute Capability 3.0 or higher (required by CuPy)
+- Docker with non-root access configured
+- Nvidia Container Toolkit
+- Developed and tested on Ubuntu 22.04 LTS with Nvidia drivers installed
+
 ### Development
 To run the application in development mode, use command `make dev`. This will host the web server with live reload using uvicorn, and will host the web client with live reload using Webpack dev server. Any changes made to the web client or web server while the application is running will be automatically included. Entrypoint to the application is `localhost:80`.
 

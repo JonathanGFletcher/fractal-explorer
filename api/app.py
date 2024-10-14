@@ -32,8 +32,3 @@ logger.addHandler(stream_handler)
 engine = create_engine(SQLITE_DB_URL, connect_args={ "check_same_thread": False })
 SQLModel.metadata.create_all(engine)
 logger.info("Database initialized...")
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=80)

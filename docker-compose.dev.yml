@@ -1,14 +1,24 @@
 services:
 
   server:
-    build: 
+    build:
       context: ./api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     networks:
       - cluster
     volumes:
       - media:/media
       - data:/data
+    command: uv run uvicorn --host 0.0.0.0 --port 80 app:app
+    develop:
+      watch:
+        - action: sync
+          path: ./api
+          target: /app/api
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./api/pyproject.toml
     deploy:
       resources:
         reservations:
@@ -20,9 +30,19 @@ services:
   frontend:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     networks:
       - cluster
+    command: npm run dev
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app/frontend
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./frontend/package.json
 
   proxy:
     build: ./proxy

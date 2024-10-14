@@ -1,19 +1,24 @@
 services:
 
   server:
-    build: ./server
+    build: ./api
     networks:
       - cluster
     volumes:
-      - ./server:/app/server
       - media:/media
+      - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
   frontend:
     build: ./frontend
     networks:
       - cluster
-    volumes:
-      - ./frontend:/app/frontend
 
   proxy:
     build: ./proxy
@@ -32,3 +37,4 @@ networks:
 
 volumes:
   media:
+  data:

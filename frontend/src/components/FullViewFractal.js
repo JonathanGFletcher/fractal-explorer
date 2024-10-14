@@ -50,8 +50,8 @@ const FullViewFractal = () => {
     const centerSelected = (e) => {
         if (!centerToolActive) return;
 
-        const imageX = e.clientX - 10; // Account for padding
-        const imageY = e.clientY - 10;
+        const imageX = e.clientX;
+        const imageY = e.clientY;
         const imageXRatio = imageX / fullImageWidth;
         const imageYRatio = imageY / fullImageHeight;
         const coordXRatio = (imageXRatio * 2 - 1);

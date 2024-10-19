@@ -9,10 +9,21 @@ from PIL import Image
 
 
 def render_julia(config: JuliaConfig) -> np.ndarray:
-    x_min = -1.5 + config.center.x * config.scale
-    x_max = 1.5 + config.center.x * config.scale
-    y_min = -1.5 + config.center.y * config.scale
-    y_max = 1.5 + config.center.y * config.scale
+    bound_x_min = -1.5
+    bound_x_max = 1.5
+    if config.dimensions.width < config.dimensions.height:
+        bound_x_min *= (config.dimensions.width / config.dimensions.height)
+        bound_x_max *= (config.dimensions.width / config.dimensions.height)
+    bound_y_min = -1.5
+    bound_y_max = 1.5
+    if config.dimensions.width >= config.dimensions.height:
+        bound_y_min *= (config.dimensions.height / config.dimensions.width)
+        bound_y_max *= (config.dimensions.height / config.dimensions.width)
+
+    x_min = bound_x_min + config.center.x * config.scale
+    x_max = bound_x_max + config.center.x * config.scale
+    y_min = bound_y_min + config.center.y * config.scale
+    y_max = bound_y_max + config.center.y * config.scale
     x_range = x_max - x_min
     y_range = y_max - y_min
 

@@ -32,11 +32,11 @@ if __name__ == "__main__":
     #             "y": 0.156,
     #         },
     #         "center": {
-    #             "x": 0.0,
-    #             "y": 0.0,
+    #             "x": -0.0012809409535713874,
+    #             "y": 0.0042718019291621626,
     #         },
-    #         "scale": 64,
-    #         "iterations": 500,
+    #         "scale": 274877906944,
+    #         "iterations": 1000,
     #         "samples": 4,
     #         "dimensions": {
     #             "width": 300,
@@ -48,9 +48,9 @@ if __name__ == "__main__":
     #         },
     #         "colors": [],
     #     },
-    #     "seconds": 1,
+    #     "seconds": 60,
     # })
     # print(res.status_code, res.reason)
 
-    res = requests.get("http://localhost/api/render/video/julia?id=9bc73b1f-32ca-4335-9de3-59f573d7a0bb")
+    res = requests.get("http://localhost/api/render/video/julia?id=f305b95d-fa0d-495b-a511-2b26836abe4a")
     print(res.json())

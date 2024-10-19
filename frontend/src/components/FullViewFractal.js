@@ -52,13 +52,16 @@ const FullViewFractal = () => {
 
         const targetX = e.clientX;
         const targetY = e.clientY;
-        
         const targetXRatio = targetX / fullImageWidth;
         const targetYRatio = targetY / fullImageHeight;
-        const imageMinX = (-1.5 + params?.center?.x) / params?.scale;
-        const imageMinY = (-1.5 + params?.center?.y) / params?.scale;
-        const imageMaxX = (1.5 + params?.center?.x) / params?.scale;
-        const imageMaxY = (1.5 + params?.center?.y) / params?.scale;
+        const boundMinX = (fullImageWidth < fullImageHeight) ? -1.5 * (fullImageWidth / fullImageHeight) : -1.5
+        const boundMaxX = (fullImageWidth < fullImageHeight) ? 1.5 * (fullImageWidth / fullImageHeight) : 1.5
+        const boundMinY = (fullImageWidth >= fullImageHeight) ? -1.5 * (fullImageHeight / fullImageWidth) : -1.5
+        const boundMaxY = (fullImageWidth >= fullImageHeight) ? 1.5 * (fullImageHeight / fullImageWidth) : 1.5
+        const imageMinX = (boundMinX + params?.center?.x) / params?.scale;
+        const imageMaxX = (boundMaxX + params?.center?.x) / params?.scale;
+        const imageMinY = (boundMinY + params?.center?.y) / params?.scale;
+        const imageMaxY = (boundMaxY + params?.center?.y) / params?.scale;
         const imageRangeX = imageMaxX - imageMinX;
         const imageRangeY = imageMaxY - imageMinY;
         const targetXCoord = (targetXRatio * 2 - 1) * (imageRangeX / 2);

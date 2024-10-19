@@ -14,14 +14,14 @@ if __name__ == "__main__":
     #         },
     #         "scale": 1,
     #         "iterations": 500,
-    #         "samples": 4,
+    #         "samples": 1,
     #         "dimensions": {
-    #             "width": 1920,
-    #             "height": 1080,
+    #             "width": 300,
+    #             "height": 200,
     #             "view_min_x": 0,
     #             "view_min_y": 0,
-    #             "view_max_x": 1920,
-    #             "view_max_y": 1080,
+    #             "view_max_x": 300,
+    #             "view_max_y": 200,
     #         },
     #         "colors": [],
     #     },
@@ -52,5 +52,5 @@ if __name__ == "__main__":
     # })
     # print(res.status_code, res.reason)
 
-    res = requests.get("http://localhost/api/render/video/julia?id=f305b95d-fa0d-495b-a511-2b26836abe4a")
+    res = requests.get("http://localhost/api/render/video/julia?id=1f38daec-b811-4eae-97e9-46ecb4d98738")
     print(res.json())

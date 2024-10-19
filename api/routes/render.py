@@ -108,23 +108,30 @@ async def new_video_julia(config: JuliaVideoConfig, background_tasks: Background
     filename = f"{id}.avi"
     path = f"/media/{filename}"
 
-    def progress_value(start: float, end: float, ratio: float) -> float:
-        return start + ((end - start) * ratio)
+    def linear_value(start: float, end: float, ratio: float) -> float:
+        total_range = end - start
+        return start + total_range * ratio
+    
+    def curve_value(start: float, end: float, scale: float):
+        total_range = end - start
+        progress = 1 - (1 / scale)
+        return start + progress * total_range
 
     frames = []
     num_frames = config.seconds * 30
     for i in range(num_frames + 1):
         ratio = i / num_frames
         constant = Vector2F(
-            x=progress_value(config.start.constant.x, config.end.constant.x, ratio),
-            y=progress_value(config.start.constant.y, config.end.constant.y, ratio),
+            x=linear_value(config.start.constant.x, config.end.constant.x, ratio),
+            y=linear_value(config.start.constant.y, config.end.constant.y, ratio),
         )
+        scale = np.pow(2, linear_value(np.log2(config.start.scale), np.log2(config.end.scale), ratio))
         center = Vector2F(
-            x=progress_value(config.start.center.x, config.end.center.x, ratio),
-            y=progress_value(config.start.center.y, config.end.center.y, ratio),
+            x=curve_value(config.start.center.x, config.end.center.x, scale),
+            y=curve_value(config.start.center.y, config.end.center.y, scale),
         )
-        scale = np.pow(2, progress_value(np.log2(config.start.scale), np.log2(config.end.scale), ratio))
-        iterations = int(progress_value(config.start.iterations, config.end.iterations, ratio))
+
+        iterations = int(linear_value(config.start.iterations, config.end.iterations, ratio))
         r = JuliaConfig(
             power=config.start.power,
             constant=constant,

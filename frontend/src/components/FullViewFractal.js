@@ -50,20 +50,21 @@ const FullViewFractal = () => {
     const centerSelected = (e) => {
         if (!centerToolActive) return;
 
-        const imageX = e.clientX;
-        const imageY = e.clientY;
-        const imageXRatio = imageX / fullImageWidth;
-        const imageYRatio = imageY / fullImageHeight;
-        const coordXRatio = (imageXRatio * 2 - 1);
-        const coordYRatio = (imageYRatio * 2 - 1);
-        const imageMinX = params?.center?.x - 2.5 / params?.scale;
-        const imageMinY = params?.center?.y - 2.5 / params?.scale;
-        const imageMaxX = params?.center?.x + 2.5 / params?.scale;
-        const imageMaxY = params?.center?.y + 2.5 / params?.scale;
-        const coordWidth = imageMaxX - imageMinX;
-        const coordHeight = imageMaxY - imageMinY;
-        const newCenterX = params?.center?.x + (coordWidth * coordXRatio / 2.5);
-        const newCenterY = params?.center?.y + (coordHeight * coordYRatio / 2.5);
+        const targetX = e.clientX;
+        const targetY = e.clientY;
+        
+        const targetXRatio = targetX / fullImageWidth;
+        const targetYRatio = targetY / fullImageHeight;
+        const imageMinX = (-1.5 + params?.center?.x) / params?.scale;
+        const imageMinY = (-1.5 + params?.center?.y) / params?.scale;
+        const imageMaxX = (1.5 + params?.center?.x) / params?.scale;
+        const imageMaxY = (1.5 + params?.center?.y) / params?.scale;
+        const imageRangeX = imageMaxX - imageMinX;
+        const imageRangeY = imageMaxY - imageMinY;
+        const targetXCoord = (targetXRatio * 2 - 1) * (imageRangeX / 2);
+        const targetYCoord = (targetYRatio * 2 - 1) * (imageRangeY / 2);
+        const newCenterX = params?.center?.x + targetXCoord;
+        const newCenterY = params?.center?.y + targetYCoord;
 
         updateFullViewParams({
             ...params,

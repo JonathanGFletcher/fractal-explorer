@@ -43,6 +43,12 @@ async def image_julia(config: JuliaConfig):
     url = f"/api/static/{filename}"
     if os.path.isfile(path):
         return { "url": url }
+    
+    image = fractal_image(render_julia(config))
+    image.save(path)
+    return { "url": url }
+
+
 @router.post("/image/mandelbrot")
 async def image_mandelbrot(config: MandelbrotConfig):
     config.colors = default_colors()

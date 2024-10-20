@@ -52,5 +52,5 @@ if __name__ == "__main__":
     # })
     # print(res.status_code, res.reason)
 
-    res = requests.get("http://localhost/api/render/video/julia?id=1f38daec-b811-4eae-97e9-46ecb4d98738")
+    res = requests.get("http://localhost/api/render/video/julia?id=3297eb06-0c49-4d47-8f47-6335dd73c1dc")
     print(res.json())

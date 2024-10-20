@@ -32,9 +32,7 @@ class FractalDimensions(BaseModel):
     view_max_y: int
 
 
-class JuliaConfig(BaseModel):
-    power: int
-    constant: Vector2F
+class FractalConfig(BaseModel):
     center: Vector2F
     scale: float
     iterations: int
@@ -42,13 +40,18 @@ class JuliaConfig(BaseModel):
     dimensions: FractalDimensions
     colors: Optional[List[ColorStep]]
 
-class MandelbrotConfig(BaseModel):
-    center: Vector2F
-    scale: float
-    iterations: int
-    samples: int
-    dimensions: FractalDimensions
-    colors: Optional[List[ColorStep]]
+class JuliaConfig(FractalConfig):
+    power: int
+    constant: Vector2F
+    
+
+class MandelbrotConfig(FractalConfig):
+    ...
+
+class VideoConfig(BaseModel):
+    start: FractalConfig
+    end: FractalConfig
+    seconds: int
 
 class JuliaVideoConfig(BaseModel):
     start: JuliaConfig

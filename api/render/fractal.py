@@ -19,13 +19,13 @@ def render_julia(config: JuliaConfig, real, imag):
 
     mod = cp.sqrt(cp.abs(z) ** 2)
     smooth_iterations = iterations - cp.log2(cp.maximum(1, cp.log2(mod)))
-    return np.clip(cp.asnumpy(smooth_iterations / config.iterations), 0, 1)
+    return cp.clip(cp.asnumpy(smooth_iterations / config.iterations), 0, 1)
 
 
 def render_mandelbrot(config: MandelbrotConfig, real, imag):
     c = real + 1j * imag
-    z = cp.zeros_like(c, dtype=np.complex128)
-    iterations = cp.zeros(c.shape, dtype=np.float32)
+    z = cp.zeros_like(c, dtype=cp.complex128)
+    iterations = cp.zeros(c.shape, dtype=cp.float32)
 
     for i in range(config.iterations):
         mask = cp.abs(z) <= 2
@@ -35,7 +35,7 @@ def render_mandelbrot(config: MandelbrotConfig, real, imag):
 
     mod = cp.sqrt(cp.abs(z) ** 2)
     smooth_iterations = iterations - cp.log2(cp.maximum(1, cp.log2(mod)))
-    return np.clip(cp.asnumpy(smooth_iterations / config.iterations), 0, 1)
+    return cp.clip(cp.asnumpy(smooth_iterations / config.iterations), 0, 1)
 
 
 def render(config: FractalConfig, render_func: callable) -> np.ndarray:
@@ -91,10 +91,9 @@ def render(config: FractalConfig, render_func: callable) -> np.ndarray:
         jitter_real = real + (cp.random.rand(height, width) - 0.5) * (x_max - x_min) / full_width
         jitter_imag = imag + (cp.random.rand(height, width) - 0.5) * (y_max - y_min) / full_height
         normalized_iterations = render_func(config, jitter_real, jitter_imag)
-
-        final_r_channel += cp.asarray(np.interp(normalized_iterations, step_values, r_colors).astype(np.float32))
-        final_g_channel += cp.asarray(np.interp(normalized_iterations, step_values, g_colors).astype(np.float32))
-        final_b_channel += cp.asarray(np.interp(normalized_iterations, step_values, b_colors).astype(np.float32))
+        final_r_channel += cp.asarray(np.interp(normalized_iterations, step_values, r_colors).astype(cp.float32))
+        final_g_channel += cp.asarray(np.interp(normalized_iterations, step_values, g_colors).astype(cp.float32))
+        final_b_channel += cp.asarray(np.interp(normalized_iterations, step_values, b_colors).astype(cp.float32))
 
     final_r_channel /= config.samples
     final_g_channel /= config.samples

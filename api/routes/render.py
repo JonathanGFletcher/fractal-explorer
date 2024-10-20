@@ -40,8 +40,8 @@ async def image_julia(config: JuliaConfig):
     filename = julia_filename(config, '', 'png')
     path = f"/media/{filename}"
     url = f"/api/static/{filename}"
-    # if os.path.isfile(path):
-    #     return { "url": url }
+    if os.path.isfile(path):
+        return { "url": url }
     
     image = fractal_image(render(config, render_julia))
     image.save(path)
@@ -54,8 +54,8 @@ async def image_mandelbrot(config: MandelbrotConfig):
     filename = mandelbrot_filename(config, '', 'png')
     path = f"/media/{filename}"
     url = f"/api/static/{filename}"
-    # if os.path.isfile(path):
-    #     return { "url": url }
+    if os.path.isfile(path):
+        return { "url": url }
     
     image = fractal_image(render(config, render_mandelbrot))
     image.save(path)

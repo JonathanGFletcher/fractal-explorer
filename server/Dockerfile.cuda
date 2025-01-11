@@ -1,0 +1,17 @@
+FROM nvidia/cuda:12.6.1-runtime-ubuntu24.04
+
+COPY --from=golang:1.23 /usr/local/go/ /usr/local/go/ 
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+RUN go install gorgonia.org/cu/cmd/cudatest@latest
+
+WORKDIR /app
+COPY . server
+
+WORKDIR /app/server
+RUN go mod download
+
+RUN go build -o /server
+CMD ["/server"]
+
+EXPOSE 80
